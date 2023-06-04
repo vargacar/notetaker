@@ -2,8 +2,9 @@ const express = require("express");
 const fs = require("fs");
 const notes = require("./db/db.json");
 const path = require("path");
-const uuid = require("uuid");
-const { DH_CHECK_P_NOT_SAFE_PRIME } = require("constants");
+const { v4: uuidv4 } = require('uuid');
+
+
 
 
 const app = express();
@@ -23,8 +24,8 @@ app.get("/api/notes", (req, res) => {
 // Post function to add new notes to db.json
 app.post("/api/notes", (req, res) => {
     const notes = JSON.parse(fs.readFileSync("./db/db.json"));
-    const newNotes = req.body;
-    newNotes.id = uuid.v4();
+    const newNotes = {text:req.body.text,title:req.body.title,id:uuidv4()};
+    
     notes.push(newNotes);
     fs.writeFileSync("./db/db.json", JSON.stringify(notes))
     res.json(notes);
@@ -42,15 +43,15 @@ app.delete("/api/notes/:id", (req, res) => {
 //HTML calls
 //calls home page
 app.get("/", function (req, res) {
-    res.sendFile(path.join(__dirname, "/public/index.html"));
+    res.sendFile(path.join(__dirname, "./public/index.html"));
 });
 //call for notes.html
 app.get("/notes", function (req, res) {
-    res.sendFile(path.join(__dirname, "/public/notes.html"));
+    res.sendFile(path.join(__dirname, "./public/notes.html"));
 });
 
-//Start listen
-// app.listen(PORT, function () {
-//     console.log("App listening on PORT: " + PORT);
-// });
-app.listen(process.env.PORT || 4023);
+// Start listen
+app.listen(PORT, function () {
+    console.log("App listening on PORT: " + PORT);
+});
+// app.listen(process.env.PORT || 4023);
